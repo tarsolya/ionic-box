@@ -10,12 +10,12 @@ NPM_PACKAGES="cordova ionic bower grunt phonegap"
 # PROVISIONING
 function apt_install {
   echo "Installing APT package: $1"
-  apt-get -y install "$1"
+  apt-get -y install "$1" >/dev/null 2>&1
 }
 
 function npm_install {
   echo "Installing global NPM package: $1"
-  npm install -g "$1"
+  npm install -g "$1" >/dev/null 2>&1
 }
 
 echo "Updating APT sources ..."
@@ -28,13 +28,13 @@ for package in $APT_PACKAGES; do
 done
 
 echo "Downloading Android SDK ($ANDROID_SDK) ..."
-curl -O $ANDROID_SDK > /opt/$ANDROID_SDK_FILENAME
+curl -s -O $ANDROID_SDK > /opt/$ANDROID_SDK_FILENAME
 
 echo "Extracting Android SDK ..."
 tar -xzf $ANDROID_SDK_FILENAME -C /opt
 
 echo "Setting up permissions ..."
-sudo chown -R vagrant /opt/android-sdk-linux > /dev/null 2>&1
+sudo chown -R vagrant /opt/android-sdk-linux >/dev/null 2>&1
 
 echo "export ANDROID_HOME=/opt/android-sdk-linux" >> /home/vagrant/.bashrc
 echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashrc
@@ -54,10 +54,13 @@ expect {
   "Do you accept the license" { exp_send "y\r" ; exp_continue }
   eof
 }
-'
+' >/dev/null 2>&1
 
 echo "Installing SASS ..."
 sudo gem install sass > /dev/null 2>&1
+
+echo "Regenerating locales ..."
+update-locale LANG=en_US.UTF-8 LANGUAGE=en_US.UTF-8 LC_ALL=en_US.UTF-8 >/dev/null 2>&1
 
 echo "Done. Use 'vagrant ssh' to login into your brand new Snapp / Ionic dev box! :)"
 
