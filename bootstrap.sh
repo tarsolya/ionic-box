@@ -3,8 +3,6 @@
 ANDROID_SDK_FILENAME=android-sdk_r24-linux.tgz
 ANDROID_SDK=http://dl.google.com/android/$ANDROID_SDK_FILENAME
 
-#sudo apt-get install python-software-properties
-#sudo add-apt-repository ppa:webupd8team/java
 apt-get update
 apt-get install -y nodejs nodejs-legacy npm git openjdk-7-jdk ant expect
 
@@ -26,5 +24,8 @@ expect {
     eof
 }
 '
+# `zipalign` is missing in "tools" folder in sdk_r23.0.2, copy it
+cp android-sdk-linux/build-tools/19.1.0/zipalign android-sdk-linux/tools/
 
 sudo gem install sass
+
