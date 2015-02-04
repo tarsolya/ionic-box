@@ -1,35 +1,63 @@
 #!/usr/bin/env bash
 
+# SETUP START
 ANDROID_SDK_FILENAME=android-sdk_r24-linux.tgz
 ANDROID_SDK=http://dl.google.com/android/$ANDROID_SDK_FILENAME
+APT_PACKAGES="nodejs nodejs-legacy npm git openjdk-7-jdk ant expect"
+NPM_PACKAGES="cordova ionic bower grunt phonegap"
+# SETUP END
 
-apt-get update
-apt-get install -y nodejs nodejs-legacy npm git openjdk-7-jdk ant expect
+# PROVISIONING
+function apt_install {
+  echo "Installing APT package: $1"
+  apt-get -y install "$1"
+}
 
-curl -O $ANDROID_SDK
-tar -xzvf $ANDROID_SDK_FILENAME
-sudo chown -R vagrant android-sdk-linux/
+function npm_install {
+  echo "Installing global NPM package: $1"
+  npm install -g "$1"
+}
 
-echo "ANDROID_HOME=~/android-sdk-linux" >> /home/vagrant/.bashrc
-echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashrc
-echo "PATH=\$PATH:~/android-sdk-linux/tools:~/android-sdk-linux/platform-tools" >> /home/vagrant/.bashrc
+echo "Updating APT sources ..."
+export DEBIAN_FRONTEND=noninteractive
+apt-get update > /dev/null 2>&1
 
-# Install required global NPM packages
-for package in $(cordova ionic bower grunt phonegap); do
-  npm install -g $package
+echo "Installing required APT packages ..."
+for package in $APT_PACKAGES; do
+  apt_install $package
 done
 
+echo "Downloading Android SDK ($ANDROID_SDK) ..."
+curl -O $ANDROID_SDK > /opt/$ANDROID_SDK_FILENAME
+
+echo "Extracting Android SDK ..."
+tar -xzf $ANDROID_SDK_FILENAME -C /opt
+
+echo "Setting up permissions ..."
+sudo chown -R vagrant /opt/android-sdk-linux > /dev/null 2>&1
+
+echo "export ANDROID_HOME=/opt/android-sdk-linux" >> /home/vagrant/.bashrc
+echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashrc
+echo "export PATH=\$PATH:/opt/android-sdk-linux/tools:/opt/android-sdk-linux/platform-tools" >> /home/vagrant/.bashrc
+
+# Install required global NPM packages
+echo "Installing NPM packages ..."
+for package in $NPM_PACKAGES; do
+  npm_install $package
+done
+
+echo "Installing Android SDK packages and licenses ..."
 expect -c '
 set timeout -1   ;
-spawn /home/vagrant/android-sdk-linux/tools/android update sdk -u --all --filter platform-tool,android-19,build-tools-19.1.0
+spawn /opt/android-sdk-linux/tools/android update sdk -u --all --filter platform-tool,android-19,build-tools-19.1.0
 expect {
-    "Do you accept the license" { exp_send "y\r" ; exp_continue }
-    eof
+  "Do you accept the license" { exp_send "y\r" ; exp_continue }
+  eof
 }
 '
 
-# `zipalign` is missing in "tools" folder in sdk_r23.0.2, copy it
-cp android-sdk-linux/build-tools/19.1.0/zipalign android-sdk-linux/tools/
+echo "Installing SASS ..."
+sudo gem install sass > /dev/null 2>&1
 
-sudo gem install sass
+echo "Done. Use 'vagrant ssh' to login into your brand new Snapp / Ionic dev box! :)"
 
