@@ -15,7 +15,7 @@ echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashr
 echo "PATH=\$PATH:~/android-sdk-linux/tools:~/android-sdk-linux/platform-tools" >> /home/vagrant/.bashrc
 
 # Install required global NPM packages
-for package in $(cordova ionic bower grunt); do
+for package in $(cordova ionic bower grunt phonegap); do
   npm install -g $package
 done
 
