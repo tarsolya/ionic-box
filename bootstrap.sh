@@ -13,6 +13,7 @@ tar -xzvf $ANDROID_SDK_FILENAME
 sudo chown -R vagrant android-sdk-linux/
 
 echo "ANDROID_HOME=~/android-sdk-linux" >> /home/vagrant/.bashrc
+echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashrc
 echo "PATH=\$PATH:~/android-sdk-linux/tools:~/android-sdk-linux/platform-tools" >> /home/vagrant/.bashrc
 
 npm install -g cordova
@@ -20,7 +21,7 @@ npm install -g ionic
 expect -c '
 set timeout -1   ;
 spawn /home/vagrant/android-sdk-linux/tools/android update sdk -u --all --filter platform-tool,android-19,build-tools-19.1.0
-expect { 
+expect {
     "Do you accept the license" { exp_send "y\r" ; exp_continue }
     eof
 }
