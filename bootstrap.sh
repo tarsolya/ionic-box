@@ -3,7 +3,7 @@
 # SETUP START
 ANDROID_SDK_FILENAME=android-sdk_r24-linux.tgz
 ANDROID_SDK=http://dl.google.com/android/$ANDROID_SDK_FILENAME
-APT_PACKAGES="nodejs nodejs-legacy npm git openjdk-7-jdk ant expect"
+APT_PACKAGES="nodejs nodejs-legacy npm git openjdk-7-jdk ant expect gcc-multilib lib32z1 lib32stdc++6"
 NPM_PACKAGES="cordova ionic bower grunt phonegap"
 # SETUP END
 
@@ -37,7 +37,7 @@ echo "Setting up permissions ..."
 sudo chown -R vagrant /opt/android-sdk-linux >/dev/null 2>&1
 
 echo "export ANDROID_HOME=/opt/android-sdk-linux" >> /home/vagrant/.bashrc
-echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-i386" >> /home/vagrant/.bashrc
+echo "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> /home/vagrant/.bashrc
 echo "export PATH=\$PATH:/opt/android-sdk-linux/tools:/opt/android-sdk-linux/platform-tools" >> /home/vagrant/.bashrc
 
 # Install required global NPM packages
