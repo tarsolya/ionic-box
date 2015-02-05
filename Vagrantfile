@@ -13,6 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 8100, host: 8100
   config.vm.network "forwarded_port", guest: 35729, host: 35729
 
+  config.vm.synced_folder ".", "/snapp-builder", type: "nfs"
+
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--usb", "on"]
     vb.customize ["usbfilter", "add", "0", "--target", :id, "--name", "android", "--vendorid", "0x18d1"]
